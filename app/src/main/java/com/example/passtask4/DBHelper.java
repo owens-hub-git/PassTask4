@@ -15,25 +15,25 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase DB) {
-        DB.execSQL("create Table Userdetails(title TEXT primary key, description TEXT, dueDate TEXT)");
+
+        DB.execSQL("create Table Userdetails(name TEXT primary key, contact TEXT, dob TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase DB, int i, int i1) {
         DB.execSQL("drop Table if exists Userdetails");
     }
-
-
-    public Boolean insertuserdata(String title, String description, String dueDate) {
+    //Method to insert data into table
+    public Boolean insertuserdata(String name, String contact, String dob) {
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("name", title);
-        contentValues.put("contact", description);
-        contentValues.put("dob", dueDate);
+        contentValues.put("name", name);
+        contentValues.put("contact", contact);
+        contentValues.put("dob", dob);
 
         long result = DB.insert("Userdetails", null, contentValues);
 
-        if (result == -1) {
+        if(result == -1) {
             return false;
         } else {
             return true;
@@ -41,19 +41,19 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     //Method to update data, copy above method and place here
-    public Boolean updateuserdata(String title, String description, String dueDate) {
+    public Boolean updateuserdata(String name, String contact, String dob) {
         SQLiteDatabase DB = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("contact", description);
-        contentValues.put("dob", dueDate);
+        contentValues.put("contact", contact);
+        contentValues.put("dob", dob);
 
-        Cursor cursor = DB.rawQuery("Select * from Userdetails where title = ?", new String[]{title}); //3
+        Cursor cursor = DB.rawQuery("Select * from Userdetails where name = ?", new String[]{name}); //3
 
-        if (cursor.getCount() > 0) {
+        if(cursor.getCount() > 0) {
 
-            long result = DB.update("Userdetails", contentValues, "title=?", new String[]{title});//2
+            long result = DB.update("Userdetails", contentValues, "name=?", new String[]{name});//2
 
-            if (result == -1) {
+            if(result == -1) {
                 return false;
             } else {
                 return true;
@@ -64,17 +64,15 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    public Boolean deletedata(String title) {
+    public Boolean deletedata(String name) {
         SQLiteDatabase DB = this.getWritableDatabase();
+        Cursor cursor = DB.rawQuery("Select * from Userdetails where name = ?", new String[]{name});
 
-        Cursor cursor = DB.rawQuery("Select * from Userdetails where title = ?", new String[]{title});
+        if(cursor.getCount() > 0) {
 
+            long result = DB.delete("Userdetails","name=?", new String[]{name});
 
-        if (cursor.getCount() > 0) {
-
-            long result = DB.delete("Userdetails", "name=?", new String[]{title});
-
-            if (result == -1) {
+            if(result == -1) {
                 return false;
             } else {
                 return true;
@@ -83,15 +81,16 @@ public class DBHelper extends SQLiteOpenHelper {
             return false;
         }
     }
-
-
     public Cursor getdata() {
-
         SQLiteDatabase DB = this.getWritableDatabase();
 
-        Cursor cursor = DB.rawQuery("Select * from Userdetails", null);
+        Cursor cursor = DB.rawQuery("Select * from Userdetails",null);
         return cursor;
 
 
+
+
     }
+
+
 }
